@@ -1,6 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
@@ -24,6 +24,7 @@ camera.position.z = 3.5;
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector("#canvas"),
   antialias: true,
+  alpha: true,
 });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -32,8 +33,10 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 
 // orbit controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; // optional, for smoother controls
+// const controls = new OrbitControls(camera, renderer.domElement);
+// controls.enableDamping = true; // optional, for smoother controls
+
+let model;
 
 // load HDRI
 const rgbeLoader = new RGBELoader();
@@ -55,7 +58,8 @@ const loader = new GLTFLoader();
 loader.load(
   "./DamagedHelmet.gltf",
   function (gltf) {
-    scene.add(gltf.scene);
+    model = gltf.scene;
+    scene.add(model);
   },
   undefined,
   function (error) {
@@ -72,10 +76,28 @@ const rgbShiftPass = new ShaderPass(RGBShiftShader);
 rgbShiftPass.uniforms["amount"].value = 0.003; // adjust the amount of RGB shift
 composer.addPass(rgbShiftPass);
 
+window.addEventListener("mousemove", (e) => {
+  // console.log(e.clientX / window.innerWidth, e.clientY / window.innerHeight);
+
+  if (model) {
+    const rotationX = (e.clientX / window.innerWidth - 0.5) * (Math.PI * 0.3);
+    const rotationY = (e.clientY / window.innerHeight - 0.5) * (Math.PI * 0.3);
+    model.rotation.y = rotationX;
+    model.rotation.x = rotationY;
+  }
+});
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+});
+
 // animation loop
 function animate() {
   requestAnimationFrame(animate);
-  controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+  // controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
   composer.render();
 }
 
