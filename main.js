@@ -8,6 +8,8 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader";
 
+import gsap from "gsap";
+
 // scene
 const scene = new THREE.Scene();
 
@@ -82,8 +84,12 @@ window.addEventListener("mousemove", (e) => {
   if (model) {
     const rotationX = (e.clientX / window.innerWidth - 0.5) * (Math.PI * 0.3);
     const rotationY = (e.clientY / window.innerHeight - 0.5) * (Math.PI * 0.3);
-    model.rotation.y = rotationX;
-    model.rotation.x = rotationY;
+    gsap.to(model.rotation, {
+      y: rotationX,
+      x: rotationY,
+      duration: 0.5,
+      ease: "power2.out",
+    });
   }
 });
 
