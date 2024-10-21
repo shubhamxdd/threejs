@@ -38,7 +38,7 @@ controls.enableDamping = true; // optional, for smoother controls
 // load HDRI
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load(
-  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/shanghai_bund_1k.hdr", // replace with the path to your HDRI file
+  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aviation_museum_1k.hdr", // replace with the path to your HDRI file
   function (texture) {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = texture;
@@ -69,7 +69,7 @@ const renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
 
 const rgbShiftPass = new ShaderPass(RGBShiftShader);
-rgbShiftPass.uniforms["amount"].value = 0.0030; // adjust the amount of RGB shift
+rgbShiftPass.uniforms["amount"].value = 0.003; // adjust the amount of RGB shift
 composer.addPass(rgbShiftPass);
 
 // animation loop
