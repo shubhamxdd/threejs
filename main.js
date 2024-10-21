@@ -3,6 +3,10 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
+import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader";
 
 // scene
 const scene = new THREE.Scene();
@@ -14,7 +18,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.z = 4;
+camera.position.z = 3.5;
 
 // renderer
 const renderer = new THREE.WebGLRenderer({
@@ -38,7 +42,7 @@ rgbeLoader.load(
   function (texture) {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = texture;
-    scene.background = texture;
+    // scene.background = texture;
   },
   undefined,
   function (error) {
@@ -59,11 +63,20 @@ loader.load(
   }
 );
 
+// postprocessing
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const rgbShiftPass = new ShaderPass(RGBShiftShader);
+rgbShiftPass.uniforms["amount"].value = 0.0030; // adjust the amount of RGB shift
+composer.addPass(rgbShiftPass);
+
 // animation loop
 function animate() {
   requestAnimationFrame(animate);
   controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
-  renderer.render(scene, camera);
+  composer.render();
 }
 
 animate();
