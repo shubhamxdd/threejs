@@ -9,12 +9,12 @@ const scene = new THREE.Scene();
 
 // camera
 const camera = new THREE.PerspectiveCamera(
-  75,
+  40,
   window.innerWidth / window.innerHeight,
   0.1,
   100
 );
-camera.position.z = 5;
+camera.position.z = 4;
 
 // renderer
 const renderer = new THREE.WebGLRenderer({
@@ -24,6 +24,9 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1;
+
 // orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; // optional, for smoother controls
@@ -31,7 +34,7 @@ controls.enableDamping = true; // optional, for smoother controls
 // load HDRI
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load(
-  'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/shanghai_bund_1k.hdr', // replace with the path to your HDRI file
+  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/shanghai_bund_1k.hdr", // replace with the path to your HDRI file
   function (texture) {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = texture;
@@ -39,7 +42,7 @@ rgbeLoader.load(
   },
   undefined,
   function (error) {
-    console.error('An error occurred loading the HDRI:', error);
+    console.error("An error occurred loading the HDRI:", error);
   }
 );
 
